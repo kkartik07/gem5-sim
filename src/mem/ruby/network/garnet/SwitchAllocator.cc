@@ -418,29 +418,45 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 
     auto ou = m_router->getOutputUnit(outport);
     // 1st HT = 10
-    if((m_router->get_id() == 9) && ((m_router->getPortDirectionName(ou->get_direction())) == "East") && (random_number <= 7)){
+    if ((m_router->get_id() == 9) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "East")
+    && (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 14) && ((m_router->getPortDirectionName(ou->get_direction())) == "South") && (random_number <= 7)){
+    else if ((m_router->get_id() == 14) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 11) && ((m_router->getPortDirectionName(ou->get_direction())) == "West") && (random_number <= 7)){
+    else if ((m_router->get_id() == 11) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 6) && ((m_router->getPortDirectionName(ou->get_direction())) == "North") && (random_number <= 7)){
+    else if ((m_router->get_id() == 6) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    (random_number <= 7)){
         return false;
     }
-    // 2nd one
-    else if((m_router->get_id() == 4) && ((m_router->getPortDirectionName(ou->get_direction())) == "East") && (random_number <= 7)){
+    // 2nd HT = 5
+    else if ((m_router->get_id() == 4) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 9) && ((m_router->getPortDirectionName(ou->get_direction())) == "South") && (random_number <= 7)){
+    else if ((m_router->get_id() == 9) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 6) && ((m_router->getPortDirectionName(ou->get_direction())) == "West") && (random_number <= 7)){
+    else if ((m_router->get_id() == 6) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7)){
         return false;
     }
-    else if((m_router->get_id() == 1) && ((m_router->getPortDirectionName(ou->get_direction())) == "North") && (random_number <= 7)){
+    else if ((m_router->get_id() == 1) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    (random_number <= 7)){
         return false;
     }
     
@@ -452,22 +468,168 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // int random_number = distr(gen);
 
     // auto ou = m_router->getOutputUnit(outport);
-    // // 1st HT = 10
-    // if((m_router->get_id() == 34) && ((m_router->getPortDirectionName(ou->get_direction())) == "East") && (random_number <= 7)){
+    // 1 HT CASE
+    // 1st HT = 35
+    // if ((m_router->get_id() == 34) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
     //     return false;
     // }
-    // else if((m_router->get_id() == 43) && ((m_router->getPortDirectionName(ou->get_direction())) == "South") && (random_number <= 7)){
+    // else if ((m_router->get_id() == 43) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
     //     return false;
     // }
-    // else if((m_router->get_id() == 36) && ((m_router->getPortDirectionName(ou->get_direction())) == "West") && (random_number <= 7)){
+    // else if ((m_router->get_id() == 36) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
     //     return false;
     // }
-    // else if((m_router->get_id() == 27) && ((m_router->getPortDirectionName(ou->get_direction())) == "North") && (random_number <= 7)){
+    // else if ((m_router->get_id() == 27) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
     //     return false;
     // }
-    
 
-    
+
+    // // 2 HT CASE
+    // // 1st HT = 18
+    // if ((m_router->get_id() == 17) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 26) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 19) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 10) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+
+    // // 2nd HT = 44
+    // else if ((m_router->get_id() == 43) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 52) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 45) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 36) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+
+    // // 4 HT CASE
+    // // 1st HT = 18
+    // if ((m_router->get_id() == 17) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 26) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 19) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 10) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+    // // 2nd HT = 21
+    // else if ((m_router->get_id() == 20) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 29) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 22) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 13) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+    // // 3rd HT = 42
+    // else if ((m_router->get_id() == 41) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 50) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 43) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 34) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+    // // 4th HT = 45
+    // else if ((m_router->get_id() == 44) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 53) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 46) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+    // else if ((m_router->get_id() == 37) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
+
+
+    // =============== normal (without ht) =====================
     // Check if outvc needed
     // Check if credit needed (for multi-flit packet)
     // Check if ordering violated (in ordered vnet)
