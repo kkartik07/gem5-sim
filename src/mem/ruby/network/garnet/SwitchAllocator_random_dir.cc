@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2020 Inria
  * Copyright (c) 2016 Georgia Institute of Technology
@@ -29,15 +30,15 @@
  */
 
 
-#include "mem/ruby/network/garnet/SwitchAllocator.hh"
+#include <random>
 
 #include "debug/RubyNetwork.hh"
 #include "mem/ruby/network/garnet/GarnetNetwork.hh"
 #include "mem/ruby/network/garnet/InputUnit.hh"
 #include "mem/ruby/network/garnet/OutputUnit.hh"
 #include "mem/ruby/network/garnet/Router.hh"
+#include "mem/ruby/network/garnet/SwitchAllocator.hh"
 
-#include <random>
 // static int counter = 0;
 
 
@@ -185,7 +186,7 @@ SwitchAllocator::arbitrate_inports()
 //                 int invc = m_vc_winners[inport];
 
 //                 int outvc = input_unit->get_outvc(invc);
-                
+
 //                 if (outvc == -1) {
 //                     // VC Allocation - select any free VC from outport
 //                     outvc = vc_allocate(outport, inport, invc);
@@ -235,8 +236,8 @@ SwitchAllocator::arbitrate_inports()
 
 
 //                     // -----------------------------------------------
-//                     if(m_router->get_id() == 3){
-//                         // input_unit->set_vc_active(invc, curTick());    
+//                     if (m_router->get_id() == 3){
+//                         // input_unit->set_vc_active(invc, curTick());
 //                         // input_unit->increment_credit(invc, false, curTick());
 //                         std::cout<<"invc "<<invc<<" NOT free " <<"for Router "<<m_router->get_id()<<std::endl;
 //                     }
@@ -244,7 +245,7 @@ SwitchAllocator::arbitrate_inports()
 //                         // Free this VC
 //                         input_unit->set_vc_idle(invc, curTick());
 //                         std::cout<<"invc "<<invc<<" free "<<"for Router "<<m_router->get_id()<<std::endl;
-                        
+
 
 //                         // Send a credit back
 //                         // along with the information that this VC is now idle
@@ -354,7 +355,7 @@ SwitchAllocator::arbitrate_outports()
 
                     // Free this VC
                     input_unit->set_vc_idle(invc, curTick());
-                    
+
 
                     // Send a credit back
                     // along with the information that this VC is now idle
@@ -409,14 +410,15 @@ SwitchAllocator::arbitrate_outports()
 bool
 SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 {
-    
+
     // ---------------------------------- 4 * 4------------------------------------------
     std::random_device rd; // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
     std::uniform_int_distribution<> distr(1, 10); // Range [1, 100]
     int random_number = distr(gen);
+    int dir_rand = distr(gen); // for selecting the direction randomly with some probability
     auto ou = m_router->getOutputUnit(outport);
-    // 1st HT = 10
+    // // 1st HT = 10
     // if ((m_router->get_id() == 9) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "East")
     // && (random_number <= 7)){
@@ -438,7 +440,7 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     //     return false;
     // }
 
-    // 2nd HT = 5
+    // // 2nd HT = 5
     // else if ((m_router->get_id() == 4) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
     // (random_number <= 7)){
@@ -464,91 +466,91 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // 1ht HT = 5
     if ((m_router->get_id() == 4) &&
     ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
-    (random_number <= 7)){
+    (random_number <= 7) && (dir_rand <=5)){
         return false;
     }
-    // else if ((m_router->get_id() == 9) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 6) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 1) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
+    else if ((m_router->get_id() == 9) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 6) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 1) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
 
     // 2nd HT = 10
-    // if ((m_router->get_id() == 9) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "East")
-    // && (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 14) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    else if ((m_router->get_id() == 11) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
-    (random_number <= 7)){
+    if ((m_router->get_id() == 9) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "East")
+    && (random_number <= 7) && (dir_rand <=5)){
         return false;
     }
-    // else if ((m_router->get_id() == 6) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
+    else if ((m_router->get_id() == 14) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 11) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 6) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
 
     // 3rd HT = 6
-    // if ((m_router->get_id() == 5) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "East")
-    // && (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 10) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 7) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
+    if ((m_router->get_id() == 5) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "East")
+    && (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 10) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 7) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
     else if ((m_router->get_id() == 2) &&
     ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
-    (random_number <= 7)){
+    (random_number <= 7) && (dir_rand <=5)){
         return false;
     }
 
     // 4th HT = 9
-    // else if ((m_router->get_id() == 8) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "East")
-    // && (random_number <= 7)){
-    //     return false;
-    // }
-    else if ((m_router->get_id() == 13) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
-    (random_number <= 7)){
+    else if ((m_router->get_id() == 8) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "East")
+    && (random_number <= 7) && (dir_rand <=5)){
         return false;
     }
-    // else if ((m_router->get_id() == 10) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    // else if ((m_router->get_id() == 5) &&
-    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
-    // (random_number <= 7)){
-    //     return false;
-    // }
-    
+    else if ((m_router->get_id() == 13) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 10) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+    else if ((m_router->get_id() == 5) &&
+    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    (random_number <= 7) && (dir_rand <=5)){
+        return false;
+    }
+
 
     // // ---------------------------------- 8 * 8 ------------------------------------------
     // std::random_device rd; // Obtain a random number from hardware
@@ -835,5 +837,3 @@ SwitchAllocator::resetStats()
 } // namespace garnet
 } // namespace ruby
 } // namespace gem5
-
-

@@ -29,15 +29,15 @@
  */
 
 
-#include "mem/ruby/network/garnet/SwitchAllocator.hh"
+#include <random>
 
 #include "debug/RubyNetwork.hh"
 #include "mem/ruby/network/garnet/GarnetNetwork.hh"
 #include "mem/ruby/network/garnet/InputUnit.hh"
 #include "mem/ruby/network/garnet/OutputUnit.hh"
 #include "mem/ruby/network/garnet/Router.hh"
+#include "mem/ruby/network/garnet/SwitchAllocator.hh"
 
-#include <random>
 // static int counter = 0;
 
 
@@ -185,7 +185,7 @@ SwitchAllocator::arbitrate_inports()
 //                 int invc = m_vc_winners[inport];
 
 //                 int outvc = input_unit->get_outvc(invc);
-                
+
 //                 if (outvc == -1) {
 //                     // VC Allocation - select any free VC from outport
 //                     outvc = vc_allocate(outport, inport, invc);
@@ -235,8 +235,8 @@ SwitchAllocator::arbitrate_inports()
 
 
 //                     // -----------------------------------------------
-//                     if(m_router->get_id() == 3){
-//                         // input_unit->set_vc_active(invc, curTick());    
+//                     if (m_router->get_id() == 3){
+//                         // input_unit->set_vc_active(invc, curTick());
 //                         // input_unit->increment_credit(invc, false, curTick());
 //                         std::cout<<"invc "<<invc<<" NOT free " <<"for Router "<<m_router->get_id()<<std::endl;
 //                     }
@@ -244,7 +244,7 @@ SwitchAllocator::arbitrate_inports()
 //                         // Free this VC
 //                         input_unit->set_vc_idle(invc, curTick());
 //                         std::cout<<"invc "<<invc<<" free "<<"for Router "<<m_router->get_id()<<std::endl;
-                        
+
 
 //                         // Send a credit back
 //                         // along with the information that this VC is now idle
@@ -354,7 +354,7 @@ SwitchAllocator::arbitrate_outports()
 
                     // Free this VC
                     input_unit->set_vc_idle(invc, curTick());
-                    
+
 
                     // Send a credit back
                     // along with the information that this VC is now idle
@@ -409,7 +409,7 @@ SwitchAllocator::arbitrate_outports()
 bool
 SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 {
-    
+
     // ---------------------------------- 4 * 4------------------------------------------
     std::random_device rd; // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
@@ -548,7 +548,7 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // (random_number <= 7)){
     //     return false;
     // }
-    
+
 
     // // ---------------------------------- 8 * 8 ------------------------------------------
     // std::random_device rd; // Obtain a random number from hardware

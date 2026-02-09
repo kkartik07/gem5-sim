@@ -29,15 +29,15 @@
  */
 
 
-#include "mem/ruby/network/garnet/SwitchAllocator.hh"
+#include <random>
 
 #include "debug/RubyNetwork.hh"
 #include "mem/ruby/network/garnet/GarnetNetwork.hh"
 #include "mem/ruby/network/garnet/InputUnit.hh"
 #include "mem/ruby/network/garnet/OutputUnit.hh"
 #include "mem/ruby/network/garnet/Router.hh"
+#include "mem/ruby/network/garnet/SwitchAllocator.hh"
 
-#include <random>
 // static int counter = 0;
 
 
@@ -185,7 +185,7 @@ SwitchAllocator::arbitrate_inports()
 //                 int invc = m_vc_winners[inport];
 
 //                 int outvc = input_unit->get_outvc(invc);
-                
+
 //                 if (outvc == -1) {
 //                     // VC Allocation - select any free VC from outport
 //                     outvc = vc_allocate(outport, inport, invc);
@@ -235,8 +235,8 @@ SwitchAllocator::arbitrate_inports()
 
 
 //                     // -----------------------------------------------
-//                     if(m_router->get_id() == 3){
-//                         // input_unit->set_vc_active(invc, curTick());    
+//                     if (m_router->get_id() == 3){
+//                         // input_unit->set_vc_active(invc, curTick());
 //                         // input_unit->increment_credit(invc, false, curTick());
 //                         std::cout<<"invc "<<invc<<" NOT free " <<"for Router "<<m_router->get_id()<<std::endl;
 //                     }
@@ -244,7 +244,7 @@ SwitchAllocator::arbitrate_inports()
 //                         // Free this VC
 //                         input_unit->set_vc_idle(invc, curTick());
 //                         std::cout<<"invc "<<invc<<" free "<<"for Router "<<m_router->get_id()<<std::endl;
-                        
+
 
 //                         // Send a credit back
 //                         // along with the information that this VC is now idle
@@ -346,19 +346,43 @@ SwitchAllocator::arbitrate_outports()
                 m_router->grant_switch(inport, t_flit);
                 m_output_arbiter_activity++;
 
+
                 if ((t_flit->get_type() == TAIL_) ||
                     t_flit->get_type() == HEAD_TAIL_) {
 
                     // This Input VC should now be empty
                     assert(!(input_unit->isReady(invc, curTick())));
 
-                    // Free this VC
-                    input_unit->set_vc_idle(invc, curTick());
-                    
+                    // =========================================================
+                    //  VC STATE ATTACK MODIFICATION
+                    // =========================================================
 
-                    // Send a credit back
-                    // along with the information that this VC is now idle
-                    input_unit->increment_credit(invc, true, curTick());
+                    // 1. Calculate Local VC Index
+                    int vcs_per_vnet = m_router->get_vc_per_vnet();
+                    int local_vc = invc % vcs_per_vnet;
+
+                    // 2. Determine if this VC should be attacked (Block 2 VCs per VNet)
+                    //    If true, we will NOT free the VC state, causing a leak.
+                    bool is_attack_target = (local_vc < 2);
+
+                    if (is_attack_target) {
+                         // ATTACK BEHAVIOR:
+                         // 1. Do NOT call set_vc_idle(). The VC remains in ACTIVE_ state forever.
+                         // 2. Send credit back, but pass 'false' for is_free_signal so upstream
+                         //    node doesn't think the VC is fully empty/reusable yet.
+                         input_unit->increment_credit(invc, false, curTick());
+                    }
+                    else {
+                        // NORMAL BEHAVIOR:
+                        // Free this VC and signal upstream it is idle
+                        input_unit->set_vc_idle(invc, curTick());
+                        input_unit->increment_credit(invc, true, curTick());
+                    }
+
+                    // =========================================================
+                    //  END MODIFICATION
+                    // =========================================================
+
                 } else {
                     // Send a credit back
                     // but do not indicate that the VC is idle
@@ -409,13 +433,13 @@ SwitchAllocator::arbitrate_outports()
 bool
 SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 {
-    
+
     // ---------------------------------- 4 * 4------------------------------------------
     std::random_device rd; // Obtain a random number from hardware
     std::mt19937 gen(rd()); // Seed the generator
     std::uniform_int_distribution<> distr(1, 10); // Range [1, 100]
-    int random_number = distr(gen);
-    auto ou = m_router->getOutputUnit(outport);
+    // int random_number = distr(gen);
+    // auto ou = m_router->getOutputUnit(outport);
     // 1st HT = 10
     // if ((m_router->get_id() == 9) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "East")
@@ -462,11 +486,11 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
 
     // 4ht case:
     // 1ht HT = 5
-    if ((m_router->get_id() == 4) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
-    (random_number <= 7)){
-        return false;
-    }
+    // if ((m_router->get_id() == 4) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "East") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
     // else if ((m_router->get_id() == 9) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
     // (random_number <= 7)){
@@ -494,11 +518,11 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // (random_number <= 7)){
     //     return false;
     // }
-    else if ((m_router->get_id() == 11) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
-    (random_number <= 7)){
-        return false;
-    }
+    // else if ((m_router->get_id() == 11) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
     // else if ((m_router->get_id() == 6) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
     // (random_number <= 7)){
@@ -521,11 +545,11 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // (random_number <= 7)){
     //     return false;
     // }
-    else if ((m_router->get_id() == 2) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
-    (random_number <= 7)){
-        return false;
-    }
+    // else if ((m_router->get_id() == 2) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "North") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
 
     // 4th HT = 9
     // else if ((m_router->get_id() == 8) &&
@@ -533,11 +557,11 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // && (random_number <= 7)){
     //     return false;
     // }
-    else if ((m_router->get_id() == 13) &&
-    ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
-    (random_number <= 7)){
-        return false;
-    }
+    // else if ((m_router->get_id() == 13) &&
+    // ((m_router->getPortDirectionName(ou->get_direction())) == "South") &&
+    // (random_number <= 7)){
+    //     return false;
+    // }
     // else if ((m_router->get_id() == 10) &&
     // ((m_router->getPortDirectionName(ou->get_direction())) == "West") &&
     // (random_number <= 7)){
@@ -548,7 +572,7 @@ SwitchAllocator::send_allowed(int inport, int invc, int outport, int outvc)
     // (random_number <= 7)){
     //     return false;
     // }
-    
+
 
     // // ---------------------------------- 8 * 8 ------------------------------------------
     // std::random_device rd; // Obtain a random number from hardware
